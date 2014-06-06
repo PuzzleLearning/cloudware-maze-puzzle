@@ -4,8 +4,13 @@ import sys
 
 start = (56, 660)
 end = (386, 349)
-#iterations = 0
+iterations = 0
 img_canvas = 0
+
+
+def std_write(s):
+    sys.stdout.write(s)
+    sys.stdout.flush()
 
 
 def iswhite(value):
@@ -13,12 +18,56 @@ def iswhite(value):
         return True
 
 
-#def output(pixels):
-    #global iterations
-    #im = Image.new("RGB", img_canvas)
-    #im.putdata(pixels)
-    #im = Image.open(pixels)
-    #im.save("t-" + str(iterations))
+def determineDirection(x, y, px, py):
+    direction = None
+    if (x > px):
+        direction = 'E'
+    elif (y > py):
+        direction = 'S'
+    elif (x < px):
+        direction = 'W'
+    elif (y < py):
+        direction = 'N'
+    else:
+        direction = '-'
+    return direction
+
+
+def makeHerRed(pixel):
+    if iswhite(pixel):
+        return (225, 0, 0)
+    else:
+        return pixel
+
+
+def drawRedLine(x, y, px, py, pixel, thick):
+    black = (0, 0, 0)
+    red = (225, 0, 0)  # red
+    pixel[x, y] = red
+
+    d = determineDirection(x, y, px, py)
+    if (d in ['E', 'W']):
+        direction = 'up'
+        if pixel[x, y-1] == black:
+            direction = 'down'
+        if pixel[x, y+1] == black:
+            direction = 'up'
+        for i in range(1, thick):
+            if direction == 'up':
+                pixel[x, y-i] = makeHerRed(pixel[x, y-i])
+            else:
+                pixel[x, y+i] = makeHerRed(pixel[x, y+i])
+    elif (d in ['N', 'S']):
+        direction = 'left'
+        if pixel[x-1, y] == black:
+            direction = 'right'
+        if pixel[x+1, y] == black:
+            direction = 'left'
+        for i in range(1, thick):
+            if direction == 'left':
+                pixel[x-i, y] = makeHerRed(pixel[x-i, y])
+            else:
+                pixel[x+i, y] = makeHerRed(pixel[x+i, y])
 
 
 def getadjacent(n):
@@ -37,9 +86,9 @@ def BFS(start, end, pixels):
         path = queue.get()
         pixel = path[-1]
 
-        #iterations += 1
-        #if (iterations % 500):
-        #    output(pixels)
+        iterations += 1
+        if (iterations % 50000 == 0):
+            std_write('+')
 
         if pixel == end:
             return path
@@ -76,11 +125,12 @@ if __name__ == '__main__':
     result_img = Image.open("proper_input.png")
     result_img = result_img.convert('RGB')
     path_pixels = result_img.load()
-    #print str(path)
 
+    px, py = path[0]
     for position in path:
         x, y = position
-        path_pixels[x, y] = (255, 0, 0)  # red
+        drawRedLine(x, y, px, py, path_pixels, 4)
+        px, py = position
 
-    #print 'iterations: ' + str(iterations)
+    print 'Iterations processed: ' + str(iterations)
     result_img.save(sys.argv[2])
