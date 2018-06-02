@@ -98,7 +98,7 @@ def bfs(start, end, pixels, verbose=False):
             x, y = adjacent
             if is_white(pixels[x, y]):
                 if verbose:
-                    six.print_('analyzing pixel x: ' + str(x) + ' and y: ' + str(y))
+                    six.print_('analyzing pixel x: {} and y: {}'.format(str(x), str(y)))
                 pixels[x, y] = (127, 127, 127)  # see note
                 new_path = list(path)
                 new_path.append(adjacent)
@@ -134,5 +134,5 @@ if __name__ == '__main__':
         draw_red_line(x, y, px, py, path_pixels, 4)
         px, py = position
 
-    six.print_('Iterations processed: ' + str(iterations))
+    six.print_('Iterations processed: {}'.format(str(iterations)))
     result_img.save(sys.argv[2])
