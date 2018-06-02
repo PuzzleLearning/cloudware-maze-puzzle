@@ -20,5 +20,9 @@ It's possbile to use the *Breadth-first search* algorithm to traverse the graph 
 #### Usage
 
 ```
-invoke: python make_me_free.py input.png result.png
+pip install -r requirements.txt
+```
+
+```
+python make_me_free.py input.png result.png
 ```
